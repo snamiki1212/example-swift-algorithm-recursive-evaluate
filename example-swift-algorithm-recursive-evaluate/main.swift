@@ -46,8 +46,8 @@ func getCalcIdx(_ expr: String) throws -> Int{
     var i = 0;
     var deep = 0;
     while(i < expr.count){
-        let isCenterCalculator = deep == 1 && isCalculator(expr[i])
-        if(isCenterCalculator) { return i; }
+        let isTopCalculator = deep == 1 && isCalculator(expr[i])
+        if(isTopCalculator) { return i; }
         if(expr[i] == "(") { deep+=1; }
         if(expr[i] == ")") { deep-=1; }
         i+=1;
@@ -67,15 +67,15 @@ func getIndex(_ expr: String)  -> (calcIdx: Int, startIdxOfA: Int, endIdxOfA: In
 
 
 //----------------
-var expr: String;
-expr = "7";
-//expr = "(2+2)";
-//expr = "((1+3)+((1+10)*5))";
-
-let result = evaluate(expr)
-print(result);
-
-
-
-
-
+//var expr: String;
+//expr = "7";
+////expr = "(2+2)";
+////expr = "((1+3)+((1+10)*5))";
+//
+//let result = evaluate(expr)
+//print(result);
+//
+//
+//
+//
+//
