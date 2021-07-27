@@ -8,46 +8,46 @@
 import Foundation
 
 enum MyError: Error {
-    case InvalidCalculator;
+    case InvalidOperation;
     case InvalidExpression;
 }
 
 public func evaluate(_ expr: String) -> Int {
     if( canBeNum(expr) ) { return Int(expr) ?? -1}
-    let (calculator, leftStr, rightStr) = getTopEachElement(expr);
+    let (operation, leftStr, rightStr) = getTopEachElement(expr);
     let leftNum = evaluate(leftStr)
     let rightNum = evaluate(rightStr)
-    return try! calc(calculator, leftNum, rightNum);
+    return try! calc(operation, leftNum, rightNum);
 }
 
 func canBeNum(_ str: String) -> Bool {
     return !str.contains("+") && !str.contains("*")
 }
 
-func calc(_ calculator: String, _ left: Int, _ right: Int) throws -> Int {
-    if(calculator == "+") {return left + right;}
-    if(calculator == "*") {return left * right;}
+func calc(_ operation: String, _ left: Int, _ right: Int) throws -> Int {
+    if(operation == "+") {return left + right;}
+    if(operation == "*") {return left * right;}
     
-    throw MyError.InvalidCalculator;
+    throw MyError.InvalidOperation;
 }
 
-func isCalculator(_ str: String) -> Bool {
+func isOperation(_ str: String) -> Bool {
     return str == "+" || str == "*"
 }
 
-func getTopEachElement(_ expr: String) -> (calculator: String, leftStr: String, rightStr: String) {
+func getTopEachElement(_ expr: String) -> (operation: String, leftStr: String, rightStr: String) {
     let (
         calcIdx,
-        startIdxOfA,
-        endIdxOfA,
-        startIdxOfB,
-        endIdxOfB:endIdxOfB
+        startIdxOfLeft,
+        endIdxOfLeft,
+        startIdxOfRight,
+        endIdxOfRight
     ) = getIndex(expr);
     
     return (
-        calculator: expr[calcIdx],
-        leftStr: expr[startIdxOfA, endIdxOfA + 1],
-        rightStr: expr[startIdxOfB, endIdxOfB + 1]
+        operation: expr[calcIdx],
+        leftStr: expr[startIdxOfLeft, endIdxOfLeft + 1],
+        rightStr: expr[startIdxOfRight, endIdxOfRight + 1]
     )
 }
     
@@ -55,8 +55,8 @@ func getCalcIdx(_ expr: String) throws -> Int{
     var i = 0;
     var deep = 0;
     while(i < expr.count){
-        let isTopCalculator = deep == 1 && isCalculator(expr[i])
-        if(isTopCalculator) { return i; }
+        let isTopOperation = deep == 1 && isOperation(expr[i])
+        if(isTopOperation) { return i; }
         if(expr[i] == "(") { deep+=1; }
         if(expr[i] == ")") { deep-=1; }
         i+=1;
@@ -65,13 +65,19 @@ func getCalcIdx(_ expr: String) throws -> Int{
     throw MyError.InvalidExpression;
 }
 
-func getIndex(_ expr: String)  -> (calcIdx: Int, startIdxOfA: Int, endIdxOfA: Int, startIdxOfB: Int, endIdxOfB: Int) {
+func getIndex(_ expr: String)  -> (calcIdx: Int, startIdxOfLeft: Int, endIdxOfLeft: Int, startIdxOfRight: Int, endIdxOfRight: Int) {
     let calcIdx = try! getCalcIdx(expr);
-    let startIdxOfA = 1;
-    let endIdxOfA = calcIdx - 1
-    let startIdxOfB = calcIdx + 1;
-    let endIdxOfB = expr.count - 2;
-    return (calcIdx: calcIdx, startIdxOfA: startIdxOfA, endIdxOfA: endIdxOfA, startIdxOfB:startIdxOfB, endIdxOfB:endIdxOfB)
+    let startIdxOfLeft = 1;
+    let endIdxOfLeft = calcIdx - 1
+    let startIdxOfRight = calcIdx + 1;
+    let endIdxOfRight = expr.count - 2;
+    return (
+        calcIdx: calcIdx,
+        startIdxOfLeft: startIdxOfLeft,
+        endIdxOfLeft: endIdxOfLeft,
+        startIdxOfRight: startIdxOfRight,
+        endIdxOfRight: endIdxOfRight
+    )
 }
 
 
