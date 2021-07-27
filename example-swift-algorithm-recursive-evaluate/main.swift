@@ -14,17 +14,10 @@ enum MyError: Error {
 
 public func evaluate(_ expr: String) -> Int {
     if( canBeNum(expr) ) { return Int(expr) ?? -1}
-    let (
-        calcIdx,
-        startIdxOfA,
-        endIdxOfA,
-        startIdxOfB,
-        endIdxOfB:endIdxOfB
-    ) = getIndex(expr);
-    
-    let left = evaluate(expr[startIdxOfA, endIdxOfA + 1])
-    let right = evaluate(expr[startIdxOfB, endIdxOfB + 1])
-    return try! calc(expr[calcIdx], left, right);
+    let (calculator, leftStr, rightStr) = getTopEachElement(expr);
+    let leftNum = evaluate(leftStr)
+    let rightNum = evaluate(rightStr)
+    return try! calc(calculator, leftNum, rightNum);
 }
 
 func canBeNum(_ str: String) -> Bool {
@@ -40,6 +33,22 @@ func calc(_ calculator: String, _ left: Int, _ right: Int) throws -> Int {
 
 func isCalculator(_ str: String) -> Bool {
     return str == "+" || str == "*"
+}
+
+func getTopEachElement(_ expr: String) -> (calculator: String, leftStr: String, rightStr: String) {
+    let (
+        calcIdx,
+        startIdxOfA,
+        endIdxOfA,
+        startIdxOfB,
+        endIdxOfB:endIdxOfB
+    ) = getIndex(expr);
+    
+    return (
+        calculator: expr[calcIdx],
+        leftStr: expr[startIdxOfA, endIdxOfA + 1],
+        rightStr: expr[startIdxOfB, endIdxOfB + 1]
+    )
 }
     
 func getCalcIdx(_ expr: String) throws -> Int{
@@ -69,13 +78,7 @@ func getIndex(_ expr: String)  -> (calcIdx: Int, startIdxOfA: Int, endIdxOfA: In
 //----------------
 //var expr: String;
 //expr = "7";
-////expr = "(2+2)";
-////expr = "((1+3)+((1+10)*5))";
-//
+//expr = "(2+2)";
+//expr = "((1+3)+((1+10)*5))";
 //let result = evaluate(expr)
 //print(result);
-//
-//
-//
-//
-//
